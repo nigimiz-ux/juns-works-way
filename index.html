@@ -2386,7 +2386,8 @@
 
     // ── Boot ─────────────────────────────────────────
     // 🚀 [CTO 패치] 설정창 완전히 폭파하고 바로 로그인창 띄우기
-    document.getElementById('config-screen').style.display = 'none';
+    document.getElementById('login-screen').classList.add('open');
+    initFirebase();
     document.getElementById('login-screen').classList.add('open');
     initFirebase();
 
