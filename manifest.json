@@ -1,0 +1,16 @@
+{
+  "name": "JUNS Work's Way",
+  "short_name": "JUNS ERP",
+  "description": "JUNS 컴퍼니 내부 업무 시스템",
+  "start_url": "/juns-works-way/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "ko"
+}

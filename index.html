@@ -1,0 +1,2406 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="JUNS Work's Way — 내부 업무 시스템" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Pretendard:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <title>JUNS Work's Way</title>
+  <style>
+    /* (기존 CSS 스타일 완벽 유지) */
+    :root {
+      --bg: #0f172a;
+      --bg2: #1e293b;
+      --bg3: #334155;
+      --surface: #1e293b;
+      --surface2: #273549;
+      --border: rgba(148, 163, 184, .15);
+      --border2: rgba(148, 163, 184, .25);
+      --text: #f1f5f9;
+      --text2: #94a3b8;
+      --text3: #64748b;
+      --accent: #38bdf8;
+      --accent2: #0ea5e9;
+      --accent-dim: rgba(56, 189, 248, .12);
+      --gold: #f59e0b;
+      --gold-dim: rgba(245, 158, 11, .12);
+      --green: #10b981;
+      --green-dim: rgba(16, 185, 129, .12);
+      --red: #f43f5e;
+      --red-dim: rgba(244, 63, 94, .12);
+      --purple: #a78bfa;
+      --purple-dim: rgba(167, 139, 250, .12);
+      --orange: #fb923c;
+      --orange-dim: rgba(251, 146, 60, .12);
+      --radius: 14px;
+      --radius-sm: 8px;
+      --radius-xs: 6px;
+      --font-display: 'DM Serif Display', serif;
+      --font-body: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+      --sidebar: 220px;
+      --topbar: 56px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--topbar);
+      z-index: 200;
+      background: rgba(15, 23, 42, .92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px 0 calc(var(--sidebar)+20px);
+      justify-content: space-between;
+      transition: padding .3s
+    }
+
+    .topbar.full {
+      padding-left: 20px
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 16px;
+      color: #fff;
+      font-weight: 400;
+      flex-shrink: 0
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: var(--text);
+      letter-spacing: .02em
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 4px 14px 4px 4px;
+      cursor: pointer;
+      transition: border-color .2s
+    }
+
+    .user-chip:hover {
+      border-color: var(--border2)
+    }
+
+    .chip-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff
+    }
+
+    .chip-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text)
+    }
+
+    .chip-role {
+      font-size: 11px;
+      color: var(--text3)
+    }
+
+    .notif-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      transition: all .2s
+    }
+
+    .notif-btn:hover {
+      border-color: var(--border2);
+      background: var(--bg3)
+    }
+
+    .notif-dot {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 7px;
+      height: 7px;
+      background: var(--red);
+      border-radius: 50%;
+      border: 1.5px solid var(--bg)
+    }
+
+    .menu-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s;
+      display: none
+    }
+
+    @media(max-width:768px) {
+      .menu-toggle {
+        display: flex
+      }
+
+      .topbar {
+        padding-left: 16px
+      }
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar);
+      z-index: 150;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding-top: var(--topbar);
+      transition: transform .3s
+    }
+
+    .sidebar.hidden {
+      transform: translateX(-100%)
+    }
+
+    .sidebar-inner {
+      padding: 16px 10px;
+      flex: 1;
+      overflow-y: auto
+    }
+
+    .sidebar-section {
+      margin-bottom: 6px
+    }
+
+    .sidebar-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      color: var(--text3);
+      padding: 8px 10px 4px;
+      text-transform: uppercase
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all .18s;
+      color: var(--text2);
+      font-size: 13px;
+      font-weight: 500;
+      position: relative;
+      margin-bottom: 2px
+    }
+
+    .nav-item:hover {
+      background: var(--surface2);
+      color: var(--text)
+    }
+
+    .nav-item.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, .2)
+    }
+
+    .nav-item svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 100px;
+      padding: 1px 6px;
+      min-width: 18px;
+      text-align: center
+    }
+
+    .sidebar-footer {
+      padding: 12px 10px 16px;
+      border-top: 1px solid var(--border)
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--text3);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all .18s;
+      width: 100%
+    }
+
+    .logout-btn:hover {
+      background: var(--red-dim);
+      color: var(--red)
+    }
+
+    main {
+      margin-left: var(--sidebar);
+      padding-top: var(--topbar);
+      min-height: 100vh;
+      transition: margin .3s
+    }
+
+    main.full {
+      margin-left: 0
+    }
+
+    .page {
+      display: none;
+      padding: 24px;
+      max-width: 1100px
+    }
+
+    .page.active {
+      display: block
+    }
+
+    @media(max-width:768px) {
+      main {
+        margin-left: 0
+      }
+
+      .page {
+        padding: 16px
+      }
+    }
+
+    .page-header {
+      margin-bottom: 24px
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 26px;
+      color: var(--text);
+      letter-spacing: .01em;
+      line-height: 1.2
+    }
+
+    .page-sub {
+      font-size: 13px;
+      color: var(--text2);
+      margin-top: 4px
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 8px
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      color: var(--text3)
+    }
+
+    @media(max-width:900px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600
+    }
+
+    .badge-blue {
+      background: var(--accent-dim);
+      color: var(--accent)
+    }
+
+    .badge-green {
+      background: var(--green-dim);
+      color: var(--green)
+    }
+
+    .badge-red {
+      background: var(--red-dim);
+      color: var(--red)
+    }
+
+    .badge-gold {
+      background: var(--gold-dim);
+      color: var(--gold)
+    }
+
+    .badge-purple {
+      background: var(--purple-dim);
+      color: var(--purple)
+    }
+
+    .badge-gray {
+      background: rgba(100, 116, 139, .15);
+      color: var(--text3)
+    }
+
+    .badge-orange {
+      background: var(--orange-dim);
+      color: var(--orange)
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+      font-family: var(--font-body)
+    }
+
+    .btn-primary {
+      background: var(--accent2);
+      color: #fff
+    }
+
+    .btn-primary:hover {
+      background: var(--accent);
+      transform: translateY(-1px)
+    }
+
+    .btn-success {
+      background: var(--green);
+      color: #fff
+    }
+
+    .btn-danger {
+      background: var(--red);
+      color: #fff
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text2)
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--border2);
+      color: var(--text);
+      background: var(--surface2)
+    }
+
+    .btn-sm {
+      padding: 5px 12px;
+      font-size: 12px
+    }
+
+    .form-group {
+      margin-bottom: 14px
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 6px;
+      letter-spacing: .02em
+    }
+
+    .req {
+      color: var(--red);
+      margin-left: 2px
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 9px 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text);
+      background: var(--bg3);
+      transition: border .15s;
+      outline: none;
+      font-family: var(--font-body)
+    }
+
+    .form-input:focus,
+    .form-select,
+    .form-textarea:focus {
+      border-color: var(--accent2);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, .1)
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border)
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px
+    }
+
+    th {
+      background: var(--bg3);
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: middle
+    }
+
+    tr:last-child td {
+      border-bottom: none
+    }
+
+    tr:hover td {
+      background: var(--surface2)
+    }
+
+    .empty-row td {
+      text-align: center;
+      color: var(--text3);
+      padding: 32px;
+      font-size: 13px
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .7);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px)
+    }
+
+    .modal-overlay.open {
+      display: flex
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 100%;
+      max-width: 540px;
+      max-height: 90vh;
+      overflow-y: auto
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700
+    }
+
+    .modal-close {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      border-radius: var(--radius-xs);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text2);
+      font-size: 14px
+    }
+
+    .toast-container {
+      position: fixed;
+      top: 68px;
+      right: 16px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none
+    }
+
+    .toast {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .4);
+      animation: slideIn .3s ease;
+      max-width: 300px;
+      pointer-events: auto
+    }
+
+    .toast.success {
+      border-color: var(--green);
+      background: rgba(16, 185, 129, .1)
+    }
+
+    .toast.error {
+      border-color: var(--red);
+      background: rgba(244, 63, 94, .1)
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(120%);
+        opacity: 0
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1
+      }
+    }
+
+    /* ─── Login Screen (No Config) ─── */
+    #login-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 500;
+      align-items: center;
+      justify-content: center
+    }
+
+    #login-screen.open {
+      display: flex
+    }
+
+    .login-wrap {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px
+    }
+
+    .login-logo {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 26px;
+      color: #fff;
+      margin: 0 auto 20px
+    }
+
+    .login-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      text-align: center;
+      color: var(--text);
+      margin-bottom: 4px
+    }
+
+    .login-sub {
+      font-size: 13px;
+      color: var(--text3);
+      text-align: center;
+      margin-bottom: 28px
+    }
+
+    .login-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px
+    }
+
+    .login-err {
+      background: var(--red-dim);
+      border: 1px solid rgba(244, 63, 94, .3);
+      color: var(--red);
+      padding: 10px 14px;
+      border-radius: var(--radius-xs);
+      font-size: 13px;
+      margin-bottom: 14px;
+      display: none
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--accent2), var(--purple));
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: all .2s
+    }
+
+    .login-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(56, 189, 248, .25)
+    }
+
+    /* Kanban, Directory, Calendar etc. styles retained */
+    .kanban {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      align-items: start
+    }
+
+    .kanban-col {
+      background: var(--bg3);
+      border-radius: var(--radius);
+      padding: 14px;
+      border: 1px solid var(--border)
+    }
+
+    .kanban-col-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px
+    }
+
+    .kanban-col-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase
+    }
+
+    .kanban-count {
+      background: var(--surface2);
+      color: var(--text3);
+      border-radius: 100px;
+      padding: 1px 8px;
+      font-size: 11px;
+      font-weight: 600
+    }
+
+    .kanban-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .kanban-card:hover {
+      border-color: var(--border2);
+      transform: translateY(-2px)
+    }
+
+    .kanban-card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px
+    }
+
+    .kanban-card-meta {
+      font-size: 11px;
+      color: var(--text3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .kanban-card-progress {
+      margin-top: 10px
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: var(--bg3);
+      border-radius: 2px;
+      overflow: hidden
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent2), var(--purple));
+      border-radius: 2px;
+      transition: width .4s
+    }
+
+    @media(max-width:700px) {
+      .kanban {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .report-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      margin-bottom: 8px;
+      transition: all .2s
+    }
+
+    .report-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px
+    }
+
+    .report-time {
+      font-size: 11px;
+      color: var(--text3)
+    }
+
+    .report-body {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.6
+    }
+
+    .notice-item {
+      background: var(--surface);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 14px 16px;
+      margin-bottom: 8px
+    }
+
+    .notice-item.urgent {
+      border-left-color: var(--red)
+    }
+
+    .notice-item.info {
+      border-left-color: var(--green)
+    }
+
+    .notice-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px
+    }
+
+    .notice-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .notice-body {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.6
+    }
+
+    .notice-meta {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 6px
+    }
+
+    .dir-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px
+    }
+
+    .dir-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      transition: all .2s;
+      cursor: pointer
+    }
+
+    .dir-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px
+    }
+
+    .dir-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .dir-rank {
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 4px
+    }
+
+    .dir-dept {
+      font-size: 11px;
+      color: var(--text3)
+    }
+
+    .dir-contacts {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px
+    }
+
+    .dir-contact {
+      font-size: 11px;
+      color: var(--text3);
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px
+    }
+
+    .cal-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      margin-bottom: 4px
+    }
+
+    .cal-day-label {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text3);
+      padding: 6px 0;
+      letter-spacing: .04em;
+      text-transform: uppercase
+    }
+
+    .cal-cell {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xs);
+      padding: 6px;
+      min-height: 72px;
+      cursor: pointer;
+      transition: all .15s
+    }
+
+    .cal-cell.today {
+      border-color: var(--accent);
+      background: var(--accent-dim)
+    }
+
+    .cal-cell.other-month {
+      opacity: .35
+    }
+
+    .cal-date {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 4px
+    }
+
+    .cal-today .cal-date {
+      color: var(--accent)
+    }
+
+    .cal-event {
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .cal-event.leave {
+      background: var(--green-dim);
+      color: var(--green)
+    }
+
+    .cal-event.project {
+      background: var(--accent-dim);
+      color: var(--accent)
+    }
+
+    .leave-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px
+    }
+
+    .approval-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 12px 0
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      position: relative
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: var(--border);
+      z-index: 0
+    }
+
+    .step-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      z-index: 1;
+      position: relative
+    }
+
+    .step-circle.done {
+      background: var(--green);
+      color: #fff
+    }
+
+    .step-circle.current {
+      background: var(--gold);
+      color: #fff;
+      box-shadow: 0 0 0 4px var(--gold-dim)
+    }
+
+    .step-circle.wait {
+      background: var(--bg3);
+      color: var(--text3);
+      border: 2px solid var(--border)
+    }
+
+    .step-circle.rejected {
+      background: var(--red);
+      color: #fff
+    }
+
+    .step-label {
+      font-size: 11px;
+      color: var(--text2);
+      margin-top: 6px;
+      text-align: center;
+      font-weight: 600
+    }
+
+    .dash-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px
+    }
+
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px;
+      background: var(--surface2);
+      border-radius: var(--radius-xs)
+    }
+
+    .activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px
+    }
+
+    .activity-text {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.5
+    }
+
+    .activity-time {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 2px
+    }
+
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 28px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .upload-zone:hover,
+    .upload-zone.drag {
+      border-color: var(--accent2);
+      background: var(--accent-dim)
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="login-screen">
+    <div class="login-wrap">
+      <div class="login-logo">J</div>
+      <div class="login-title">JUNS Work's Way</div>
+      <div class="login-sub">임직원 전용 업무망입니다. 로그인해주세요.</div>
+      <div class="login-box">
+        <div class="login-err" id="login-err"></div>
+        <div class="form-group"><label class="form-label">사원번호 (아이디)</label><input class="form-input" id="login-id"
+            placeholder="예: 19901225" maxlength="30" /></div>
+        <div class="form-group" style="margin-bottom:18px"><label class="form-label">비밀번호</label><input
+            class="form-input" id="login-pw" type="password" /></div>
+        <button class="login-btn" onclick="doLogin()">로그인</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="topbar full" id="topbar">
+    <div class="topbar-brand">
+      <button class="menu-toggle" onclick="toggleSidebar()" id="menu-btn">
+        <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+          <path fill-rule="evenodd"
+            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+            clip-rule="evenodd" />
+        </svg>
+      </button>
+      <div class="brand-logo">J</div>
+      <span class="brand-name">JUNS Work's Way</span>
+    </div>
+    <div class="topbar-right">
+      <div class="notif-btn" id="notif-btn" onclick="switchPage('notice')">
+        <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+          <path
+            d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+        </svg>
+        <span class="notif-dot" id="notif-dot" style="display:none"></span>
+      </div>
+      <div class="user-chip" onclick="switchPage('admin')">
+        <div class="chip-avatar" id="top-avatar">?</div>
+        <div>
+          <div class="chip-name" id="top-name">-</div>
+          <div class="chip-role" id="top-role">-</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar hidden" id="sidebar">
+    <div class="sidebar-inner">
+      <div class="sidebar-section">
+        <div class="sidebar-label">메인</div>
+        <div class="nav-item active" onclick="switchPage('dashboard')" data-page="dashboard">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+          </svg> 대시보드
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">업무</div>
+        <div class="nav-item" onclick="switchPage('project')" data-page="project">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+            <path fill-rule="evenodd"
+              d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+              clip-rule="evenodd" />
+          </svg> 프로젝트 보드
+          <span class="nav-badge" id="badge-project" style="display:none">0</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('report')" data-page="report">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+              clip-rule="evenodd" />
+          </svg> 일상보고
+        </div>
+        <div class="nav-item" onclick="switchPage('leave')" data-page="leave">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+              clip-rule="evenodd" />
+          </svg> 연차신청
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">소통</div>
+        <div class="nav-item" onclick="switchPage('notice')" data-page="notice">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+          </svg> 전체 공지
+        </div>
+        <div class="nav-item" onclick="switchPage('directory')" data-page="directory">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+          </svg> 직원 주소록
+        </div>
+        <div class="nav-item" onclick="switchPage('calendar')" data-page="calendar">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+              clip-rule="evenodd" />
+          </svg> 업무 캘린더
+        </div>
+      </div>
+      <div class="sidebar-section" id="admin-nav" style="display:none">
+        <div class="sidebar-label">관리자</div>
+        <div class="nav-item" onclick="switchPage('admin')" data-page="admin">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+              clip-rule="evenodd" />
+          </svg> 관리자 패널
+        </div>
+        <div class="nav-item" onclick="switchPage('approve')" data-page="approve">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              clip-rule="evenodd" />
+          </svg> 결재함
+          <span class="nav-badge" id="badge-approve" style="display:none">0</span>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()">
+        <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15">
+          <path fill-rule="evenodd"
+            d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
+            clip-rule="evenodd" />
+        </svg> 로그아웃
+      </button>
+    </div>
+  </div>
+
+  <main class="full" id="main">
+
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-title">대시보드</div>
+        <div class="page-sub" id="dash-greeting">안녕하세요</div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">진행중 프로젝트</div>
+          <div class="stat-value" style="color:var(--accent)" id="dash-projects">-</div>
+          <div class="stat-sub">개</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">미결재 건수</div>
+          <div class="stat-value" style="color:var(--gold)" id="dash-pending">-</div>
+          <div class="stat-sub">건</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">잔여 연차</div>
+          <div class="stat-value" style="color:var(--green)" id="dash-leaves">-</div>
+          <div class="stat-sub">일</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">공지사항</div>
+          <div class="stat-value" style="color:var(--purple)" id="dash-notices">-</div>
+          <div class="stat-sub">건</div>
+        </div>
+      </div>
+      <div class="dash-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">최근 활동</div>
+          </div>
+          <div class="activity-list" id="dash-activity">
+            <div style="text-align:center;color:var(--text3);padding:20px;font-size:13px">활동 내역을 불러오는 중...</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">사내망 연동 링크</div>
+          </div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.5;">
+            개인 프라이빗 OS(Project LEE)로 돌아가시려면 아래 버튼을 누르세요.<br>
+            <a href="https://nigimiz-ux.github.io/project-lee/" target="_blank"
+              style="display:inline-block; margin-top:10px; color:#fff; background:var(--accent); padding:8px 16px; border-radius:8px; text-decoration:none; font-weight:bold;">🚀
+              Project LEE로 이동</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-project">
+      <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div>
+          <div class="page-title">프로젝트 보드</div>
+          <div class="page-sub">업무·프로젝트 진행 현황</div>
+        </div>
+        <button class="btn btn-primary" id="new-project-btn" onclick="openModal('project-modal')" style="display:none">+
+          프로젝트 생성</button>
+      </div>
+      <div class="kanban">
+        <div class="kanban-col">
+          <div class="kanban-col-header"><span class="kanban-col-title" style="color:var(--text3)">시작 전</span><span
+              class="kanban-count" id="cnt-todo">0</span></div>
+          <div id="col-todo"></div>
+        </div>
+        <div class="kanban-col">
+          <div class="kanban-col-header"><span class="kanban-col-title" style="color:var(--accent)">진행 중</span><span
+              class="kanban-count" id="cnt-doing">0</span></div>
+          <div id="col-doing"></div>
+        </div>
+        <div class="kanban-col">
+          <div class="kanban-col-header"><span class="kanban-col-title" style="color:var(--green)">완료</span><span
+              class="kanban-count" id="cnt-done">0</span></div>
+          <div id="col-done"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-report">
+      <div class="page-header">
+        <div class="page-title">일상보고</div>
+        <div class="page-sub">특이사항·건의·업무보고</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">새 보고 작성</div>
+        </div>
+        <div class="form-group"><label class="form-label">유형 <span class="req">*</span></label><select
+            class="form-select" id="rep-type">
+            <option value="report">업무보고</option>
+            <option value="suggest">건의사항</option>
+            <option value="issue">특이사항</option>
+            <option value="other">기타</option>
+          </select></div>
+        <div class="form-group"><label class="form-label">제목 <span class="req">*</span></label><input class="form-input"
+            id="rep-title" placeholder="보고 제목" /></div>
+        <div class="form-group"><label class="form-label">내용 <span class="req">*</span></label><textarea
+            class="form-textarea" id="rep-body" placeholder="보고 내용을 입력하세요" style="min-height:100px"></textarea></div>
+        <div class="form-group" style="margin-bottom:0"><label class="form-label">결재 필요</label><select
+            class="form-select" id="rep-approval">
+            <option value="no">결재 불필요 (단순보고)</option>
+            <option value="yes">결재 필요</option>
+          </select></div>
+        <div style="margin-top:14px"><button class="btn btn-primary" onclick="submitReport()">보고 제출</button></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">보고 내역</div>
+        </div>
+        <div id="report-list"></div>
+      </div>
+    </div>
+
+    <div class="page" id="page-leave">
+      <div class="page-header">
+        <div class="page-title">연차 신청</div>
+        <div class="page-sub">연차 신청 및 내역 조회</div>
+      </div>
+      <div class="leave-stats">
+        <div class="stat-card">
+          <div class="stat-label">총 부여</div>
+          <div class="stat-value" style="color:var(--accent)" id="lv-total">-</div>
+          <div class="stat-sub">일</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">사용</div>
+          <div class="stat-value" style="color:var(--gold)" id="lv-used">-</div>
+          <div class="stat-sub">일</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">잔여</div>
+          <div class="stat-value" id="lv-remain">-</div>
+          <div class="stat-sub">일</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">연차 신청</div>
+        </div>
+        <div class="warning-box" id="lv-minus-warn"
+          style="display:none;background:var(--red-dim);border:1px solid rgba(244,63,94,.3);border-radius:var(--radius-xs);padding:12px;color:var(--red);font-size:13px;margin-bottom:14px">
+          ⚠️ 잔여 연차가 부족합니다. 마이너스 연차로 신청됩니다.</div>
+        <div class="form-group"><label class="form-label">유형 <span class="req">*</span></label><select
+            class="form-select" id="lv-type" onchange="calcLeaveDays()">
+            <option value="full">연차 (1일)</option>
+            <option value="am">오전 반차 (0.5일)</option>
+            <option value="pm">오후 반차 (0.5일)</option>
+          </select></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">시작일 <span class="req">*</span></label><input
+              class="form-input" type="date" id="lv-start" onchange="calcLeaveDays()" /></div>
+          <div class="form-group"><label class="form-label">종료일 <span class="req">*</span></label><input
+              class="form-input" type="date" id="lv-end" onchange="calcLeaveDays()" /></div>
+        </div>
+        <div class="form-group"><label class="form-label">신청 일수</label><input class="form-input" id="lv-days" readonly
+            style="color:var(--accent);font-weight:700" /></div>
+        <div class="form-group"><label class="form-label">사유 <span class="req">*</span></label><textarea
+            class="form-textarea" id="lv-reason" placeholder="연차 사유"></textarea></div>
+        <button class="btn btn-primary" onclick="submitLeave()">신청하기</button>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">내 신청 내역</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>기간</th>
+                <th>일수</th>
+                <th>사유</th>
+                <th>상태</th>
+                <th>상세</th>
+              </tr>
+            </thead>
+            <tbody id="lv-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-notice">
+      <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div>
+          <div class="page-title">전체 공지</div>
+          <div class="page-sub">결재권자 발송 공지사항</div>
+        </div><button class="btn btn-primary" id="new-notice-btn" onclick="openModal('notice-modal')"
+          style="display:none">+ 공지 작성</button>
+      </div>
+      <div id="notice-list"></div>
+    </div>
+
+    <div class="page" id="page-directory">
+      <div class="page-header">
+        <div class="page-title">직원 주소록</div>
+        <div class="page-sub">부서별 조직 및 연락처</div>
+      </div>
+      <div class="form-group" style="max-width:320px;margin-bottom:20px"><input class="form-input" id="dir-search"
+          placeholder="이름·부서 검색..." oninput="filterDirectory()" /></div>
+      <div class="dir-grid" id="dir-grid"></div>
+    </div>
+
+    <div class="page" id="page-calendar">
+      <div class="page-header">
+        <div class="page-title">업무 캘린더</div>
+        <div class="page-sub">연차·프로젝트·공지 통합 일정</div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><button
+            class="btn btn-ghost btn-sm" onclick="changeMonth(-1)">◀</button><span
+            style="font-size:16px;font-weight:700" id="cal-month-label">-</span><button class="btn btn-ghost btn-sm"
+            onclick="changeMonth(1)">▶</button></div>
+        <div class="cal-header">
+          <div class="cal-day-label">일</div>
+          <div class="cal-day-label">월</div>
+          <div class="cal-day-label">화</div>
+          <div class="cal-day-label">수</div>
+          <div class="cal-day-label">목</div>
+          <div class="cal-day-label">금</div>
+          <div class="cal-day-label">토</div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+    </div>
+
+    <div class="page" id="page-approve">
+      <div class="page-header">
+        <div class="page-title">결재함</div>
+        <div class="page-sub">결재 대기 중인 항목</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">연차 결재 대기</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>신청자</th>
+                <th>기간</th>
+                <th>일수</th>
+                <th>사유</th>
+                <th>처리</th>
+              </tr>
+            </thead>
+            <tbody id="apr-leave-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">보고 결재 대기</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>보고자</th>
+                <th>유형</th>
+                <th>제목</th>
+                <th>처리</th>
+              </tr>
+            </thead>
+            <tbody id="apr-report-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-admin">
+      <div class="page-header">
+        <div class="page-title">관리자 패널</div>
+        <div class="page-sub">직원 관리 및 시스템 설정</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">직원 일괄 등록 (엑셀)</div>
+          </div><button class="btn btn-ghost btn-sm" onclick="downloadTemplate()">📥 양식 다운로드</button>
+        </div>
+        <div class="upload-zone" onclick="document.getElementById('xl-input').click()" id="upload-zone">
+          <p>엑셀 파일을 클릭하거나 드래그하여 업로드</p>
+          <p style="font-size:11px;margin-top:4px">.xlsx · .xls 지원</p>
+        </div>
+        <input type="file" id="xl-input" accept=".xlsx,.xls" style="display:none" onchange="handleExcel(this)" />
+        <div id="xl-preview" style="display:none;margin-top:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span
+              style="font-size:13px;font-weight:600" id="xl-count"></span><button class="btn btn-primary btn-sm"
+              onclick="confirmUpload()">등록 확인</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>아이디</th>
+                  <th>이름</th>
+                  <th>직급</th>
+                  <th>부서</th>
+                  <th>연차</th>
+                  <th>결재레벨</th>
+                </tr>
+              </thead>
+              <tbody id="xl-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">직원 목록</div><button class="btn btn-primary btn-sm" onclick="openAddEmpModal()">+ 직원
+            추가</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>이름</th>
+                <th>직급</th>
+                <th>부서</th>
+                <th>총연차</th>
+                <th>사용</th>
+                <th>잔여</th>
+                <th>결재레벨</th>
+                <th>관리</th>
+              </tr>
+            </thead>
+            <tbody id="emp-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">전체 연차 현황</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>신청자</th>
+                <th>기간</th>
+                <th>일수</th>
+                <th>상태</th>
+                <th>신청일</th>
+              </tr>
+            </thead>
+            <tbody id="all-leave-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <div class="modal-overlay" id="project-modal">
+    <div class="modal">
+      <div class="modal-header"><span class="modal-title">프로젝트 생성</span><button class="modal-close"
+          onclick="closeModal('project-modal')">✕</button></div>
+      <div class="form-group"><label class="form-label">프로젝트명 <span class="req">*</span></label><input
+          class="form-input" id="proj-name" /></div>
+      <div class="form-group"><label class="form-label">설명</label><textarea class="form-textarea"
+          id="proj-desc"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">마감일</label><input class="form-input" type="date"
+            id="proj-due" /></div>
+        <div class="form-group"><label class="form-label">우선순위</label><select class="form-select" id="proj-priority">
+            <option value="normal">일반</option>
+            <option value="high">높음</option>
+            <option value="urgent">긴급</option>
+          </select></div>
+      </div>
+      <div class="form-group"><label class="form-label">담당자 (쉼표 구분)</label><input class="form-input" id="proj-members"
+          placeholder="홍길동, 김철수" /></div><button class="btn btn-primary" style="width:100%;margin-top:4px"
+        onclick="createProject()">생성</button>
+    </div>
+  </div>
+  <div class="modal-overlay" id="notice-modal">
+    <div class="modal">
+      <div class="modal-header"><span class="modal-title">공지 작성</span><button class="modal-close"
+          onclick="closeModal('notice-modal')">✕</button></div>
+      <div class="form-group"><label class="form-label">유형</label><select class="form-select" id="ntc-type">
+          <option value="general">일반</option>
+          <option value="urgent">긴급</option>
+          <option value="info">안내</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">제목 <span class="req">*</span></label><input class="form-input"
+          id="ntc-title" /></div>
+      <div class="form-group"><label class="form-label">내용 <span class="req">*</span></label><textarea
+          class="form-textarea" id="ntc-body" style="min-height:120px"></textarea></div>
+      <div class="form-group" style="margin-bottom:0"><label class="form-label">텔레그램 전체 발송</label><select
+          class="form-select" id="ntc-tg">
+          <option value="yes">발송</option>
+          <option value="no">발송 안 함</option>
+        </select></div><button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="postNotice()">공지
+        발송</button>
+    </div>
+  </div>
+  <div class="modal-overlay" id="emp-modal">
+    <div class="modal">
+      <div class="modal-header"><span class="modal-title" id="emp-modal-title">직원 추가</span><button class="modal-close"
+          onclick="closeModal('emp-modal')">✕</button></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">아이디 <span class="req">*</span></label><input
+            class="form-input" id="emp-id" placeholder="19901225" /></div>
+        <div class="form-group"><label class="form-label">이름 <span class="req">*</span></label><input class="form-input"
+            id="emp-name" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">직급</label><input class="form-input" id="emp-rank"
+            placeholder="대리" /></div>
+        <div class="form-group"><label class="form-label">부서</label><input class="form-input" id="emp-dept"
+            placeholder="영업팀" /></div>
+      </div>
+      <div class="form-group"><label class="form-label">연락처</label><input class="form-input" id="emp-phone"
+          placeholder="010-0000-0000" /></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">연차 (일)</label><input class="form-input" id="emp-leaves"
+            type="number" value="15" /></div>
+        <div class="form-group"><label class="form-label">결재 레벨</label><select class="form-select" id="emp-level">
+            <option value="0">0 - 일반</option>
+            <option value="1">1 - 부장</option>
+            <option value="2">2 - 실장</option>
+            <option value="3">3 - 사장</option>
+          </select></div>
+      </div>
+      <div class="form-group"><label class="form-label">텔레그램 Chat ID</label><input class="form-input" id="emp-tg" />
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">비밀번호 <span class="req">*</span></label><input
+            class="form-input" id="emp-pw" type="password" /></div>
+        <div class="form-group"><label class="form-label">비밀번호 확인</label><input class="form-input" id="emp-pw2"
+            type="password" /></div>
+      </div><button class="btn btn-primary" style="width:100%" onclick="saveEmployee()">저장</button>
+    </div>
+  </div>
+  <div class="modal-overlay" id="proj-detail-modal">
+    <div class="modal" style="max-width:600px">
+      <div class="modal-header"><span class="modal-title" id="pd-title">프로젝트 상세</span><button class="modal-close"
+          onclick="closeModal('proj-detail-modal')">✕</button></div>
+      <div id="pd-content"></div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="leave-detail-modal">
+    <div class="modal">
+      <div class="modal-header"><span class="modal-title">연차 상세</span><button class="modal-close"
+          onclick="closeModal('leave-detail-modal')">✕</button></div>
+      <div id="ld-content"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, addDoc, getDocs, query, where, orderBy, serverTimestamp, onSnapshot, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // 🚀 [CTO 패치] 하드코딩 영역: 아래 값들을 실제 발급받으신 Firebase 정보와 텔레그램 토큰으로 교체하십시오!
+    const CONFIG = {
+      firebase: {
+        apiKey: "AIzaSyDcQNHIUYSbJe8qnc4EqzRpGmQ4qufz7Ok",
+        authDomain: "aje-executive-db.firebaseapp.com",
+        projectId: "aje-executive-db",
+        storageBucket: "aje-executive-db.firebasestorage.app",
+        appId: "1:25421275822:web:8de86422d025e2cd25c33f"
+      },
+      telegram: {
+        token: "8380179704:AAFE-kdm6zJnzTI8molCdI6XRPUzKgPQIWU", // 봇 토큰 (옵션)
+        adminChatId: "5204004784" // 관리자 ID (옵션)
+      },
+      approvalChain: ['부장', '실장', '사장']
+    };
+
+    let app, auth, db, currentUser = null, previewData = [], allEmployees = [], calYear = new Date().getFullYear(), calMonth = new Date().getMonth();
+
+    function initFirebase() {
+      app = initializeApp(CONFIG.firebase);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      onAuthStateChanged(auth, async user => {
+        if (user) {
+          const snap = await getDoc(doc(db, 'users', user.uid));
+          if (snap.exists()) {
+            currentUser = { uid: user.uid, ...snap.data() };
+            showApp();
+          } else {
+            await signOut(auth);
+          }
+        }
+      });
+    }
+
+    // ── Auth ────────────────────────────────────────
+    window.doLogin = async function () {
+      const id = v('login-id'), pw = v('login-pw'), err = document.getElementById('login-err');
+      err.style.display = 'none';
+      if (!id || !pw) { show_err(err, '아이디와 비밀번호를 입력하세요'); return }
+      try { await signInWithEmailAndPassword(auth, id + '@leave.local', pw) }
+      catch (e) { show_err(err, e.code === 'auth/invalid-credential' ? '아이디 또는 비밀번호가 틀렸습니다.' : '로그인 오류: ' + e.message) }
+    };
+    function show_err(el, msg) { el.textContent = msg; el.style.display = 'block' }
+
+    window.doLogout = async function () { await signOut(auth); currentUser = null; close('login-screen'); open('login-screen'); location.reload() };
+
+    // ── App ─────────────────────────────────────────
+    function showApp() {
+      hide('login-screen');
+      document.getElementById('sidebar').classList.remove('hidden');
+      document.getElementById('topbar').classList.remove('full');
+      document.getElementById('main').classList.remove('full');
+      const ini = (currentUser.name || '?').slice(0, 1);
+      document.getElementById('top-avatar').textContent = ini;
+      document.getElementById('top-name').textContent = currentUser.name || '-';
+      document.getElementById('top-role').textContent = currentUser.rank || '';
+      const h = new Date().getHours();
+      document.getElementById('dash-greeting').textContent = (h < 12 ? '좋은 아침이에요' : h < 18 ? '좋은 오후에요' : '좋은 저녁이에요') + ', ' + currentUser.name + '님';
+      if (currentUser.approvalLevel > 0 || currentUser.isAdmin) document.getElementById('admin-nav').style.display = 'block';
+      if (currentUser.approvalLevel > 0 || currentUser.isAdmin) { document.getElementById('new-project-btn').style.display = 'inline-flex'; document.getElementById('new-notice-btn').style.display = 'inline-flex'; }
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('lv-start').value = today; document.getElementById('lv-end').value = today;
+      loadAll(); renderCalendar();
+    }
+
+    async function loadAll() {
+      await Promise.all([loadLeaveStats(), loadProjectBoard(), loadNotices(), loadReports(), loadDirectory(), loadApprovalQueue(), loadAllLeaves(), loadDashboard()]);
+    }
+
+    // ── Dashboard ───────────────────────────────────
+    async function loadDashboard() {
+      const userSnap = await getDoc(doc(db, 'users', currentUser.uid));
+      const u = userSnap.data();
+      const remain = (u.totalLeaves || 0) - (u.usedLeaves || 0);
+      setEl('dash-leaves', remain);
+      const pSnap = await getDocs(query(collection(db, 'projects'), where('status', '==', 'doing')));
+      setEl('dash-projects', pSnap.size);
+      const nSnap = await getDocs(query(collection(db, 'notices'), orderBy('createdAt', 'desc')));
+      setEl('dash-notices', nSnap.size);
+      let pending = 0;
+      if (currentUser.approvalLevel > 0) {
+        const lq = await getDocs(query(collection(db, 'requests'), where('status', '==', 'pending'), where('currentStep', '==', currentUser.approvalLevel - 1)));
+        const rq = await getDocs(query(collection(db, 'reports'), where('status', '==', 'pending'), where('currentStep', '==', currentUser.approvalLevel - 1)));
+        pending = lq.size + rq.size;
+        if (pending > 0) { document.getElementById('badge-approve').style.display = 'inline'; document.getElementById('badge-approve').textContent = pending; document.getElementById('notif-dot').style.display = 'block'; }
+      }
+      setEl('dash-pending', pending);
+      const acts = [];
+      const recs = await getDocs(query(collection(db, 'requests'), where('userId', '==', currentUser.uid), orderBy('createdAt', 'desc')));
+      recs.docs.slice(0, 3).forEach(d => { const r = d.data(); acts.push({ text: `연차 신청 (${r.start}~${r.end})`, status: r.status, time: fmtDate(r.createdAt), color: r.status === 'approved' ? 'var(--green)' : r.status === 'rejected' ? 'var(--red)' : 'var(--gold)' }) });
+      const div = document.getElementById('dash-activity');
+      if (!acts.length) { div.innerHTML = '<div style="text-align:center;color:var(--text3);padding:20px;font-size:13px">최근 활동 없음</div>'; return }
+      div.innerHTML = acts.map(a => `<div class="activity-item"><div class="activity-dot" style="background:${a.color}"></div><div><div class="activity-text">${a.text}</div><div class="activity-time">${a.time}</div></div></div>`).join('');
+    }
+
+    // ── Projects ────────────────────────────────────
+    async function loadProjectBoard() {
+      const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
+      const snaps = await getDocs(q);
+      const cols = { todo: [], doing: [], done: [] };
+      snaps.docs.forEach(d => { const p = { id: d.id, ...d.data() }; (cols[p.status] || cols.todo).push(p) });
+      ['todo', 'doing', 'done'].forEach(s => {
+        document.getElementById('cnt-' + s).textContent = cols[s].length;
+        document.getElementById('col-' + s).innerHTML = cols[s].length ? cols[s].map(p => projectCard(p)).join('') : '<div style="text-align:center;color:var(--text3);padding:16px;font-size:12px">없음</div>';
+      });
+      const total = snaps.size; document.getElementById('badge-project').style.display = total ? 'inline' : 'none'; document.getElementById('badge-project').textContent = cols.doing.length;
+    }
+
+    function projectCard(p) {
+      const pri = { normal: 'badge-gray', high: 'badge-gold', urgent: 'badge-red' }[p.priority || 'normal'];
+      const priLabel = { normal: '일반', high: '높음', urgent: '긴급' }[p.priority || 'normal'];
+      const prog = p.progress || 0;
+      return `<div class="kanban-card" onclick="showProjectDetail('${p.id}')">
+    <div class="kanban-card-title">${p.name}</div>
+    <div class="kanban-card-meta">
+      <span class="badge ${pri}">${priLabel}</span>
+      ${p.due ? `<span>~${p.due}</span>` : ''}
+      ${p.members ? `<span>${p.members}</span>` : ''}
+    </div>
+    ${p.desc ? `<div style="font-size:12px;color:var(--text3);margin-top:6px;line-height:1.4">${p.desc.slice(0, 60)}${p.desc.length > 60 ? '...' : ''}</div>` : ''}
+    <div class="kanban-card-progress">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:4px"><span>진행률</span><span>${prog}%</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${prog}%"></div></div>
+    </div>
+  </div>`;
+    }
+
+    window.createProject = async function () {
+      const name = v('proj-name'); if (!name) { toast('프로젝트명을 입력하세요', 'error'); return }
+      await addDoc(collection(db, 'projects'), { name, desc: v('proj-desc'), due: v('proj-due'), priority: v('proj-priority') || 'normal', members: v('proj-members'), status: 'todo', progress: 0, creatorId: currentUser.uid, creatorName: currentUser.name, createdAt: serverTimestamp() });
+      closeModal('project-modal'); toast('프로젝트가 생성되었습니다', 'success'); loadProjectBoard();
+      ['proj-name', 'proj-desc', 'proj-due', 'proj-members'].forEach(id => setVal(id, ''));
+    };
+
+    window.showProjectDetail = async function (id) {
+      const snap = await getDoc(doc(db, 'projects', id)); const p = snap.data();
+      document.getElementById('pd-title').textContent = p.name;
+      const isManager = currentUser.approvalLevel > 0 || currentUser.isAdmin;
+      document.getElementById('pd-content').innerHTML = `
+    <div style="margin-bottom:14px">${p.desc || '설명 없음'}</div>
+    <table style="width:100%;font-size:13px;border-collapse:collapse">
+      <tr><td style="padding:6px 0;color:var(--text3);width:80px">상태</td><td><span class="badge ${p.status === 'done' ? 'badge-green' : p.status === 'doing' ? 'badge-blue' : 'badge-gray'}">${{ todo: '시작 전', doing: '진행 중', done: '완료' }[p.status]}</span></td></tr>
+      <tr><td style="padding:6px 0;color:var(--text3)">마감일</td><td>${p.due || '-'}</td></tr>
+      <tr><td style="padding:6px 0;color:var(--text3)">담당자</td><td>${p.members || '-'}</td></tr>
+      <tr><td style="padding:6px 0;color:var(--text3)">생성자</td><td>${p.creatorName || '-'}</td></tr>
+    </table>
+    ${isManager ? `<div style="margin-top:16px">
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">진행률 업데이트</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="range" min="0" max="100" value="${p.progress || 0}" style="flex:1" id="pd-prog" oninput="document.getElementById('pd-prog-val').textContent=this.value+'%'"/>
+        <span id="pd-prog-val" style="font-size:13px;color:var(--accent);min-width:36px">${p.progress || 0}%</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <select class="form-select" id="pd-status" style="flex:1"><option value="todo" ${p.status === 'todo' ? 'selected' : ''}>시작 전</option><option value="doing" ${p.status === 'doing' ? 'selected' : ''}>진행 중</option><option value="done" ${p.status === 'done' ? 'selected' : ''}>완료</option></select>
+        <button class="btn btn-primary btn-sm" onclick="updateProject('${id}')">저장</button>
+      </div>
+    </div>`: ''}`;
+      openModal('proj-detail-modal');
+    };
+
+    window.updateProject = async function (id) {
+      const prog = parseInt(document.getElementById('pd-prog').value);
+      const status = v('pd-status');
+      await updateDoc(doc(db, 'projects', id), { progress: prog, status });
+      closeModal('proj-detail-modal'); toast('업데이트되었습니다', 'success'); loadProjectBoard();
+    };
+
+    // ── Reports ─────────────────────────────────────
+    window.submitReport = async function () {
+      const title = v('rep-title'), body = v('rep-body');
+      if (!title || !body) { toast('제목과 내용을 입력하세요', 'error'); return }
+      const needApproval = v('rep-approval') === 'yes';
+      await addDoc(collection(db, 'reports'), { type: v('rep-type'), title, body, needApproval, status: needApproval ? 'pending' : 'done', currentStep: 0, approvals: {}, userId: currentUser.uid, userName: currentUser.name, userRank: currentUser.rank || '', createdAt: serverTimestamp() });
+      if (needApproval) sendTelegramToApprover(1, `📋 보고 결재 요청\n보고자: ${currentUser.name}\n제목: ${title}`);
+      toast('보고가 제출되었습니다', 'success');
+      ['rep-title', 'rep-body'].forEach(id => setVal(id, ''));
+      loadReports(); loadApprovalQueue();
+    };
+
+    async function loadReports() {
+      const q = query(collection(db, 'reports'), where('userId', '==', currentUser.uid), orderBy('createdAt', 'desc'));
+      const snaps = await getDocs(q);
+      const typeMap = { report: '업무보고', suggest: '건의', issue: '특이', other: '기타' };
+      const div = document.getElementById('report-list');
+      if (snaps.empty) { div.innerHTML = '<div style="text-align:center;color:var(--text3);padding:20px;font-size:13px">보고 내역이 없습니다</div>'; return }
+      div.innerHTML = snaps.docs.map(d => {
+        const r = d.data(); return `
+    <div class="report-item">
+      <div class="report-header">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="badge badge-purple">${typeMap[r.type] || r.type}</span>
+          <span style="font-size:13px;font-weight:600">${r.title}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${r.needApproval ? `<span class="badge ${r.status === 'done' ? 'badge-green' : r.status === 'pending' ? 'badge-gold' : 'badge-gray'}">${r.status === 'done' ? '완료' : '결재중'}</span>` : '<span class="badge badge-gray">단순보고</span>'}
+          <span class="report-time">${fmtDate(r.createdAt)}</span>
+        </div>
+      </div>
+      <div class="report-body">${r.body}</div>
+    </div>`}).join('');
+    }
+
+    // ── Leave ────────────────────────────────────────
+    async function loadLeaveStats() {
+      const snap = await getDoc(doc(db, 'users', currentUser.uid));
+      const u = snap.data();
+      const total = u.totalLeaves || 0, used = u.usedLeaves || 0, remain = total - used;
+      setEl('lv-total', total); setEl('lv-used', used);
+      const el = document.getElementById('lv-remain');
+      el.textContent = remain; el.style.color = remain < 0 ? 'var(--red)' : remain <= 3 ? 'var(--gold)' : 'var(--green)';
+      setEl('dash-leaves', remain);
+    }
+
+    window.calcLeaveDays = function () {
+      const type = v('lv-type'), start = v('lv-start'), end = v('lv-end');
+      let days = 0;
+      if (type !== 'full') { days = 0.5; setVal('lv-end', start) }
+      else if (start && end) { const s = new Date(start), e = new Date(end); if (e >= s) { let c = new Date(s); while (c <= e) { if (c.getDay() !== 0 && c.getDay() !== 6) days++; c.setDate(c.getDate() + 1); } } }
+      setVal('lv-days', days > 0 ? days + '일' : '-');
+      const rem = parseFloat(document.getElementById('lv-remain').textContent);
+      document.getElementById('lv-minus-warn').style.display = (!isNaN(rem) && rem - days < 0) ? 'block' : 'none';
+    };
+
+    window.submitLeave = async function () {
+      const start = v('lv-start'), end = v('lv-end'), reason = v('lv-reason'), daysStr = v('lv-days');
+      const days = parseFloat(daysStr);
+      if (!start || !reason || isNaN(days) || days <= 0) { toast('모든 항목을 입력하세요', 'error'); return }
+      const rem = parseFloat(document.getElementById('lv-remain').textContent);
+      const isMinus = rem - days < 0;
+      const typeLabel = { full: '연차', am: '오전반차', pm: '오후반차' }[v('lv-type')];
+      const ref = await addDoc(collection(db, 'requests'), { userId: currentUser.uid, userName: currentUser.name, userRank: currentUser.rank || '', userDept: currentUser.dept || '', type: v('lv-type'), typeLabel, start, end, days, reason, isMinus, status: 'pending', currentStep: 0, approvals: {}, createdAt: serverTimestamp() });
+      toast('연차 신청이 완료되었습니다', 'success');
+      setVal('lv-reason', ''); sendTelegramToApprover(1, `📋 연차 결재 요청\n신청자: ${currentUser.name} ${currentUser.rank || ''}\n기간: ${start}~${end} (${days}일)${isMinus ? '\n⚠️ 마이너스 연차' : ''}\n사유: ${reason}`);
+      loadLeaveStats(); loadLeaveTbody(); loadApprovalQueue(); renderCalendar();
+    };
+
+    async function loadLeaveTbody() {
+      const q = query(collection(db, 'requests'), where('userId', '==', currentUser.uid), orderBy('createdAt', 'desc'));
+      const snaps = await getDocs(q);
+      const tb = document.getElementById('lv-tbody');
+      if (snaps.empty) { tb.innerHTML = '<tr class="empty-row"><td colspan="5">신청 내역 없음</td></tr>'; return }
+      tb.innerHTML = snaps.docs.map(d => {
+        const r = d.data(); return `<tr>
+    <td>${r.start}${r.end !== r.start ? '~' + r.end : ''}</td>
+    <td>${r.days}일${r.isMinus ? '<span class="badge badge-red" style="margin-left:4px">마이너스</span>' : ''}</td>
+    <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.reason}</td>
+    <td>${leaveBadge(r.status)}</td>
+    <td><button class="btn btn-ghost btn-sm" onclick="showLeaveDetail('${d.id}')">상세</button></td>
+  </tr>`}).join('');
+    }
+
+    window.showLeaveDetail = async function (id) {
+      const snap = await getDoc(doc(db, 'requests', id)); const r = snap.data();
+      const steps = CONFIG.approvalChain.map((name, i) => {
+        const a = Object.values(r.approvals || {}).find(a => a.level === i + 1);
+        let cls = 'wait', label = '대기';
+        if (r.status === 'rejected' && a) { cls = 'rejected'; label = '반려' }
+        else if (a?.decision === 'approve') { cls = 'done'; label = '승인' }
+        else if (r.currentStep === i) { cls = 'current'; label = '검토중' }
+        return `<div class="step"><div class="step-circle ${cls}">${i + 1}</div><div class="step-label">${name}<br><span style="font-size:10px;color:var(--text3)">${label}</span></div></div>`;
+      }).join('');
+      document.getElementById('ld-content').innerHTML = `
+    <div class="approval-steps">${steps}</div>
+    <table style="width:100%;font-size:13px;border-collapse:collapse;margin-top:14px">
+      <tr><td style="padding:7px 0;color:var(--text3);width:70px">유형</td><td>${r.typeLabel}${r.isMinus ? '<span class="badge badge-red" style="margin-left:6px">⚠️마이너스</span>' : ''}</td></tr>
+      <tr><td style="padding:7px 0;color:var(--text3)">기간</td><td>${r.start}~${r.end} (${r.days}일)</td></tr>
+      <tr><td style="padding:7px 0;color:var(--text3)">사유</td><td>${r.reason}</td></tr>
+      <tr><td style="padding:7px 0;color:var(--text3)">상태</td><td>${leaveBadge(r.status)}</td></tr>
+    </table>`;
+      openModal('leave-detail-modal');
+    };
+
+    // ── Notices ─────────────────────────────────────
+    window.postNotice = async function () {
+      const title = v('ntc-title'), body = v('ntc-body');
+      if (!title || !body) { toast('제목과 내용을 입력하세요', 'error'); return }
+      const type = v('ntc-type');
+      await addDoc(collection(db, 'notices'), { type, title, body, authorId: currentUser.uid, authorName: currentUser.name, createdAt: serverTimestamp() });
+      if (v('ntc-tg') === 'yes') sendTelegramBroadcast(`📢 ${type === 'urgent' ? '[긴급]' : type === 'info' ? '[안내]' : '[공지]'} ${title}\n\n${body}\n\n— ${currentUser.name}`);
+      closeModal('notice-modal'); toast('공지가 발송되었습니다', 'success');
+      ['ntc-title', 'ntc-body'].forEach(id => setVal(id, '')); loadNotices();
+    };
+
+    async function loadNotices() {
+      const q = query(collection(db, 'notices'), orderBy('createdAt', 'desc'));
+      const snaps = await getDocs(q);
+      const div = document.getElementById('notice-list');
+      setEl('dash-notices', snaps.size);
+      if (snaps.empty) { div.innerHTML = '<div style="text-align:center;color:var(--text3);padding:40px;font-size:13px">공지사항이 없습니다</div>'; return }
+      div.innerHTML = snaps.docs.map(d => {
+        const n = d.data(); const cls = n.type === 'urgent' ? 'urgent' : n.type === 'info' ? 'info' : ''; return `
+    <div class="notice-item ${cls}">
+      <div class="notice-header">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="badge ${n.type === 'urgent' ? 'badge-red' : n.type === 'info' ? 'badge-green' : 'badge-blue'}">${n.type === 'urgent' ? '긴급' : n.type === 'info' ? '안내' : '공지'}</span>
+          <span class="notice-title">${n.title}</span>
+        </div>
+        ${(currentUser.isAdmin || currentUser.approvalLevel > 0) ? `<button class="btn btn-ghost btn-sm" onclick="deleteNotice('${d.id}')">삭제</button>` : ''}
+      </div>
+      <div class="notice-body">${n.body}</div>
+      <div class="notice-meta">${n.authorName} · ${fmtDate(n.createdAt)}</div>
+    </div>`}).join('');
+    }
+
+    window.deleteNotice = async function (id) { await deleteDoc(doc(db, 'notices', id)); toast('삭제되었습니다', 'success'); loadNotices() };
+
+    // ── Directory ────────────────────────────────────
+    async function loadDirectory() {
+      const snaps = await getDocs(collection(db, 'users'));
+      allEmployees = snaps.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderDirectory(allEmployees);
+    }
+
+    function renderDirectory(emps) {
+      const colors = ['#38bdf8', '#a78bfa', '#10b981', '#f59e0b', '#f43f5e', '#fb923c'];
+      const div = document.getElementById('dir-grid');
+      if (!emps.length) { div.innerHTML = '<div style="color:var(--text3);font-size:13px">직원이 없습니다</div>'; return }
+      div.innerHTML = emps.map((u, i) => `
+    <div class="dir-card">
+      <div class="dir-avatar" style="background:${colors[i % colors.length]}">${(u.name || '?').slice(0, 1)}</div>
+      <div class="dir-name">${u.name || '-'}</div>
+      <div class="dir-rank">${u.rank || '-'}</div>
+      <div class="dir-dept">${u.dept || '-'}</div>
+      <div class="dir-contacts">
+        ${u.phone ? `<div class="dir-contact">📞 ${u.phone}</div>` : ''}
+        ${u.email ? `<div class="dir-contact">✉ ${u.email}</div>` : ''}
+        ${u.telegramChatId ? `<div class="dir-contact">💬 TG: ${u.telegramChatId}</div>` : ''}
+        <div class="dir-contact" style="color:var(--accent)">연차 잔여: ${(u.totalLeaves || 0) - (u.usedLeaves || 0)}일</div>
+      </div>
+    </div>`).join('');
+    }
+
+    window.filterDirectory = function () {
+      const q = v('dir-search').toLowerCase();
+      renderDirectory(q ? allEmployees.filter(u => (u.name || '').toLowerCase().includes(q) || (u.dept || '').toLowerCase().includes(q)) : allEmployees);
+    };
+
+    // ── Calendar ─────────────────────────────────────
+    window.changeMonth = function (d) { calMonth += d; if (calMonth > 11) { calMonth = 0; calYear++ } if (calMonth < 0) { calMonth = 11; calYear-- } renderCalendar() };
+
+    async function renderCalendar() {
+      document.getElementById('cal-month-label').textContent = `${calYear}년 ${calMonth + 1}월`;
+      const first = new Date(calYear, calMonth, 1), last = new Date(calYear, calMonth + 1, 0);
+      const today = new Date();
+      const events = {};
+      const lSnap = await getDocs(query(collection(db, 'requests'), where('status', '==', 'approved')));
+      lSnap.docs.forEach(d => { const r = d.data(); let c = new Date(r.start); const e = new Date(r.end); while (c <= e) { const k = c.toISOString().split('T')[0]; if (!events[k]) events[k] = []; events[k].push({ label: r.userName + '연차', cls: 'leave' }); c.setDate(c.getDate() + 1); } });
+      const pSnap = await getDocs(query(collection(db, 'projects'), where('status', '!=', 'done')));
+      pSnap.docs.forEach(d => { const p = d.data(); if (p.due) { if (!events[p.due]) events[p.due] = []; events[p.due].push({ label: p.name, cls: 'project' }) } });
+      const grid = document.getElementById('cal-grid');
+      let cells = '';
+      const startDay = first.getDay();
+      for (let i = 0; i < startDay; i++)cells += `<div class="cal-cell other-month"></div>`;
+      for (let d = 1; d <= last.getDate(); d++) {
+        const date = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const isToday = today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === d;
+        const evs = (events[date] || []).slice(0, 3).map(e => `<div class="cal-event ${e.cls}">${e.label}</div>`).join('');
+        cells += `<div class="cal-cell${isToday ? ' today' : ''}"><div class="cal-date" style="${isToday ? 'color:var(--accent);font-weight:700' : ''}">${d}</div>${evs}</div>`;
+      }
+      grid.innerHTML = cells;
+    }
+
+    // ── Approval Queue ───────────────────────────────
+    async function loadApprovalQueue() {
+      if (!currentUser.approvalLevel && !currentUser.isAdmin) return;
+      const myLevel = currentUser.approvalLevel;
+      const lq = await getDocs(query(collection(db, 'requests'), where('status', '==', 'pending'), where('currentStep', '==', myLevel - 1)));
+      const tb = document.getElementById('apr-leave-tbody');
+      if (lq.empty) { tb.innerHTML = '<tr class="empty-row"><td colspan="5">대기 건 없음</td></tr>' }
+      else {
+        tb.innerHTML = lq.docs.map(d => {
+          const r = d.data(); return `<tr>
+      <td><strong>${r.userName}</strong> ${r.userRank}</td>
+      <td>${r.start}~${r.end}</td>
+      <td>${r.days}일${r.isMinus ? '<span class="badge badge-red" style="margin-left:4px">⚠️마이너스</span>' : ''}</td>
+      <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis">${r.reason}</td>
+      <td style="display:flex;gap:5px">
+        <button class="btn btn-success btn-sm" onclick="processLeave('${d.id}','approve')">승인</button>
+        <button class="btn btn-danger btn-sm" onclick="processLeave('${d.id}','hold')">보류</button>
+      </td>
+    </tr>`}).join('');
+        document.getElementById('badge-approve').style.display = 'inline'; document.getElementById('badge-approve').textContent = lq.size;
+      }
+      const rq = await getDocs(query(collection(db, 'reports'), where('status', '==', 'pending'), where('needApproval', '==', true), where('currentStep', '==', myLevel - 1)));
+      const tb2 = document.getElementById('apr-report-tbody');
+      if (rq.empty) { tb2.innerHTML = '<tr class="empty-row"><td colspan="4">대기 건 없음</td></tr>' }
+      else {
+        tb2.innerHTML = rq.docs.map(d => {
+          const r = d.data(); return `<tr>
+    <td>${r.userName}</td><td><span class="badge badge-purple">${r.type}</span></td>
+    <td>${r.title}</td>
+    <td style="display:flex;gap:5px">
+      <button class="btn btn-success btn-sm" onclick="processReport('${d.id}','approve')">승인</button>
+      <button class="btn btn-danger btn-sm" onclick="processReport('${d.id}','hold')">보류</button>
+    </td>
+  </tr>`}).join('')
+      }
+    }
+
+    window.processLeave = async function (id, decision) {
+      const myLevel = currentUser.approvalLevel, maxLevel = CONFIG.approvalChain.length;
+      const ref = doc(db, 'requests', id); const snap = await getDoc(ref); const r = snap.data();
+      const updates = { [`approvals.${currentUser.uid}`]: { decision, name: currentUser.name, level: myLevel, at: new Date().toISOString() } };
+      if (decision !== 'approve') { updates.status = 'rejected' }
+      else if (myLevel >= maxLevel) { updates.status = 'approved'; updates.currentStep = myLevel; const ur = doc(db, 'users', r.userId); const us = await getDoc(ur); await updateDoc(ur, { usedLeaves: (us.data().usedLeaves || 0) + r.days }); }
+      else { updates.currentStep = myLevel; updates.status = 'pending'; sendTelegramToApprover(myLevel + 1, `📋 연차 결재 요청 (${CONFIG.approvalChain[myLevel]})\n신청자: ${r.userName}\n기간: ${r.start}~${r.end} (${r.days}일)`); }
+      await updateDoc(ref, updates); toast(decision === 'approve' ? '승인 처리되었습니다' : '보류 처리되었습니다', decision === 'approve' ? 'success' : 'warn');
+      loadApprovalQueue(); loadAllLeaves(); loadLeaveStats(); loadDirectory();
+    };
+
+    window.processReport = async function (id, decision) {
+      const myLevel = currentUser.approvalLevel, maxLevel = CONFIG.approvalChain.length;
+      const ref = doc(db, 'reports', id);
+      const updates = { [`approvals.${currentUser.uid}`]: { decision, name: currentUser.name, level: myLevel, at: new Date().toISOString() } };
+      if (decision !== 'approve' || myLevel >= maxLevel) updates.status = decision === 'approve' ? 'done' : 'rejected';
+      else { updates.currentStep = myLevel; updates.status = 'pending'; }
+      await updateDoc(ref, updates); toast('처리되었습니다', 'success'); loadApprovalQueue(); loadReports();
+    };
+
+    // ── Admin ────────────────────────────────────────
+    async function loadAllEmployees() {
+      const snaps = await getDocs(collection(db, 'users'));
+      const chain = CONFIG.approvalChain;
+      const tb = document.getElementById('emp-tbody');
+      if (snaps.empty) { tb.innerHTML = '<tr class="empty-row"><td colspan="8">직원 없음</td></tr>'; return }
+      tb.innerHTML = snaps.docs.map(d => {
+        const u = d.data(); const rem = (u.totalLeaves || 0) - (u.usedLeaves || 0); return `<tr>
+    <td><strong>${u.name}</strong></td><td>${u.rank || '-'}</td><td>${u.dept || '-'}</td>
+    <td>${u.totalLeaves || 0}</td><td>${u.usedLeaves || 0}</td>
+    <td style="color:${rem < 0 ? 'var(--red)' : rem <= 3 ? 'var(--gold)' : 'var(--green)'};font-weight:700">${rem}${rem < 0 ? ' ⚠️' : ''}</td>
+    <td>${chain[u.approvalLevel - 1] || '일반'}</td>
+    <td><button class="btn btn-ghost btn-sm" onclick="openEditEmp('${d.id}')">수정</button></td>
+  </tr>`}).join('');
+    }
+
+    async function loadAllLeaves() {
+      const q = query(collection(db, 'requests'), orderBy('createdAt', 'desc'));
+      const snaps = await getDocs(q);
+      const tb = document.getElementById('all-leave-tbody');
+      if (snaps.empty) { tb.innerHTML = '<tr class="empty-row"><td colspan="5">내역 없음</td></tr>'; return }
+      tb.innerHTML = snaps.docs.map(d => {
+        const r = d.data(); return `<tr>
+    <td>${r.userName} ${r.userRank}</td><td>${r.start}~${r.end}</td>
+    <td>${r.days}일${r.isMinus ? '<span class="badge badge-red" style="margin-left:4px">마이너스</span>' : ''}</td>
+    <td>${leaveBadge(r.status)}</td><td>${fmtDate(r.createdAt)}</td>
+  </tr>`}).join('');
+    }
+
+    window.openAddEmpModal = function () {
+      ['emp-id', 'emp-name', 'emp-rank', 'emp-dept', 'emp-phone', 'emp-tg', 'emp-pw', 'emp-pw2'].forEach(id => setVal(id, ''));
+      setVal('emp-leaves', '15'); setVal('emp-level', '0');
+      document.getElementById('emp-modal-title').textContent = '직원 추가';
+      document.getElementById('emp-id').disabled = false;
+      document.getElementById('emp-modal').dataset.editId = '';
+      openModal('emp-modal');
+    };
+
+    window.openEditEmp = async function (uid) {
+      const snap = await getDoc(doc(db, 'users', uid)); const u = snap.data();
+      setVal('emp-id', u.loginId || ''); document.getElementById('emp-id').disabled = true;
+      setVal('emp-name', u.name || ''); setVal('emp-rank', u.rank || ''); setVal('emp-dept', u.dept || '');
+      setVal('emp-phone', u.phone || ''); setVal('emp-leaves', u.totalLeaves || 15);
+      setVal('emp-level', u.approvalLevel || 0); setVal('emp-tg', u.telegramChatId || '');
+      setVal('emp-pw', ''); setVal('emp-pw2', '');
+      document.getElementById('emp-modal-title').textContent = '직원 수정';
+      document.getElementById('emp-modal').dataset.editId = uid; openModal('emp-modal');
+    };
+
+    window.saveEmployee = async function () {
+      const editId = document.getElementById('emp-modal').dataset.editId;
+      const id = v('emp-id'), name = v('emp-name'), pw = v('emp-pw'), pw2 = v('emp-pw2');
+      if (!name) { toast('이름을 입력하세요', 'error'); return }
+      if (!editId && !id) { toast('아이디를 입력하세요', 'error'); return }
+      if (pw && pw !== pw2) { toast('비밀번호가 일치하지 않습니다', 'error'); return }
+      if (!editId && !pw) { toast('초기 비밀번호를 입력하세요', 'error'); return }
+      const data = { name, rank: v('emp-rank'), dept: v('emp-dept'), phone: v('emp-phone'), totalLeaves: parseFloat(v('emp-leaves')) || 15, approvalLevel: parseInt(v('emp-level')) || 0, telegramChatId: v('emp-tg'), isAdmin: false, loginId: id || editId };
+      try {
+        if (editId) { await updateDoc(doc(db, 'users', editId), data); toast('수정되었습니다', 'success') }
+        else { const cred = await createUserWithEmailAndPassword(auth, id + '@leave.local', pw); data.usedLeaves = 0; await setDoc(doc(db, 'users', cred.user.uid), data); toast('직원이 추가되었습니다', 'success') }
+        closeModal('emp-modal'); loadAllEmployees(); loadDirectory();
+      } catch (e) { toast('저장 실패: ' + e.message, 'error') }
+    };
+
+    window.handleExcel = function (input) {
+      const file = input.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const wb = XLSX.read(e.target.result, { type: 'binary' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+        previewData = rows.filter(r => r.length > 1).slice(1).map(r => ({ loginId: String(r[0] || '').trim(), name: String(r[1] || '').trim(), rank: String(r[2] || '').trim(), dept: String(r[3] || '').trim(), email: String(r[4] || '').trim(), totalLeaves: parseFloat(r[5]) || 15, approvalLevel: parseInt(r[6]) || 0, telegramChatId: String(r[7] || '').trim(), phone: String(r[8] || '').trim() })).filter(r => r.loginId && r.name);
+        document.getElementById('xl-count').textContent = previewData.length + '명 미리보기';
+        document.getElementById('xl-preview').style.display = 'block';
+        document.getElementById('xl-tbody').innerHTML = previewData.map(r => `<tr><td>${r.loginId}</td><td><strong>${r.name}</strong></td><td>${r.rank}</td><td>${r.dept}</td><td>${r.totalLeaves}일</td><td>${CONFIG.approvalChain[r.approvalLevel - 1] || '일반'}</td></tr>`).join('');
+      }; reader.readAsBinaryString(file);
+    };
+
+    window.confirmUpload = async function () {
+      if (!previewData.length) return; let ok = 0, fail = 0;
+      for (const r of previewData) {
+        try { const cred = await createUserWithEmailAndPassword(auth, r.loginId + '@leave.local', r.loginId); await setDoc(doc(db, 'users', cred.user.uid), { ...r, usedLeaves: 0, isAdmin: false }); ok++ }
+        catch (e) { try { const q2 = query(collection(db, 'users'), where('loginId', '==', r.loginId)); const s = await getDocs(q2); if (!s.empty) { await updateDoc(s.docs[0].ref, r); ok++ } else fail++ } catch { fail++ } }
+      }
+      toast(`등록 완료: ${ok}명 성공${fail ? `, ${fail}명 실패` : ''}`, ok ? 'success' : 'error');
+      document.getElementById('xl-preview').style.display = 'none'; previewData = []; loadAllEmployees(); loadDirectory();
+    };
+
+    window.downloadTemplate = function () {
+      const ws = XLSX.utils.aoa_to_sheet([['아이디(생년월일)', '이름', '직급', '부서', '이메일', '연차일수', '결재레벨', '텔레그램ChatID', '연락처'], ['19901225', '홍길동', '대리', '영업팀', 'hong@co.com', '15', '0', '', '010-0000-0000'], ['19850512', '김철수', '부장', '영업팀', 'kim@co.com', '20', '1', '-100123456', '010-1234-5678']]);
+      const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, '직원등록'); XLSX.writeFile(wb, '직원등록양식.xlsx');
+    };
+
+    // ── Telegram ─────────────────────────────────────
+    async function sendTelegramToApprover(level, msg) {
+      const tg = CONFIG?.telegram; if (!tg?.token) return;
+      const q2 = query(collection(db, 'users'), where('approvalLevel', '==', level));
+      const snaps = await getDocs(q2);
+      for (const d of snaps.docs) { const u = d.data(); if (u.telegramChatId) await tg_send(u.telegramChatId, msg, tg.token) }
+      if (tg.adminChatId) await tg_send(tg.adminChatId, msg, tg.token);
+    }
+
+    async function sendTelegramBroadcast(msg) {
+      const tg = CONFIG?.telegram; if (!tg?.token) return;
+      const snaps = await getDocs(collection(db, 'users'));
+      for (const d of snaps.docs) { const u = d.data(); if (u.telegramChatId) await tg_send(u.telegramChatId, msg, tg.token) }
+      if (tg.adminChatId) await tg_send(tg.adminChatId, msg, tg.token);
+    }
+
+    async function tg_send(chatId, text, token) {
+      try { await fetch(`https://api.telegram.org/bot${token}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'Markdown' }) }) } catch (e) { }
+    }
+
+    // ── Helpers ──────────────────────────────────────
+    function v(id) { return (document.getElementById(id)?.value || '').trim() }
+    function setEl(id, val) { const el = document.getElementById(id); if (el) el.textContent = val }
+    function setVal(id, val) { const el = document.getElementById(id); if (el) el.value = val }
+    function show(id) { document.getElementById(id)?.style && (document.getElementById(id).style.display = 'block') }
+    function hide(id) { document.getElementById(id)?.style && (document.getElementById(id).style.display = 'none') }
+    function open(id) { document.getElementById(id).classList.add('open') }
+    function close(id) { document.getElementById(id).classList.remove('open') }
+    window.openModal = function (id) { document.getElementById(id).classList.add('open') }
+    window.closeModal = function (id) { document.getElementById(id).classList.remove('open') }
+    function fmtDate(ts) { if (!ts) return '-'; const d = ts.toDate ? ts.toDate() : new Date(ts); return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}` }
+    function leaveBadge(status) { const map = { pending: 'badge-gold 결재중', approved: 'badge-green 승인완료', rejected: 'badge-red 반려' }; const [cls, label] = (map[status] || 'badge-gray 알수없음').split(' '); return `<span class="badge ${cls}">${label}</span>` }
+    window.toast = function (msg, type = '') { const c = document.getElementById('toast-container'); const t = document.createElement('div'); t.className = `toast ${type}`; t.textContent = msg; c.appendChild(t); setTimeout(() => t.remove(), 3500) }
+    window.switchPage = function (page) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); const pg = document.getElementById('page-' + page); if (pg) pg.classList.add('active'); document.querySelector(`[data-page="${page}"]`)?.classList.add('active'); if (window.innerWidth <= 768) document.getElementById('sidebar').classList.add('hidden'); }
+    window.toggleSidebar = function () { document.getElementById('sidebar').classList.toggle('hidden') }
+    window.show_err = function (el, msg) { el.textContent = msg; el.style.display = 'block' }
+
+    // ── Boot ─────────────────────────────────────────
+    // 🚀 [CTO 패치] 설정창 완전히 폭파하고 바로 로그인창 띄우기
+    document.getElementById('config-screen').style.display = 'none';
+    document.getElementById('login-screen').classList.add('open');
+    initFirebase();
+
+    // Upload drag-drop
+    const zone = document.getElementById('upload-zone');
+    if (zone) {
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag') });
+      zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+      zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag'); const f = e.dataTransfer.files[0]; if (f) { const i = document.getElementById('xl-input'); const dt = new DataTransfer(); dt.items.add(f); i.files = dt.files; handleExcel(i); } });
+    }
+
+    // SW register
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { });
+  </script>
+</body>
+
+</html>
