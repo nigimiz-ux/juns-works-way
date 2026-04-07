@@ -1236,6 +1236,176 @@
       border-color: var(--accent2);
       background: var(--accent-dim)
     }
+
+    /* ─── Project Communication Board ─── */
+    .comm-board {
+      margin-top: 20px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px
+    }
+
+    .comm-board-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .comm-messages {
+      max-height: 320px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-right: 4px
+    }
+
+    .comm-msg {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px
+    }
+
+    .comm-msg.mine {
+      border-color: rgba(56, 189, 248, .25);
+      background: var(--accent-dim)
+    }
+
+    .comm-msg-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px
+    }
+
+    .comm-msg-author {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent)
+    }
+
+    .comm-msg.mine .comm-msg-author {
+      color: var(--accent)
+    }
+
+    .comm-msg-time {
+      font-size: 10px;
+      color: var(--text3)
+    }
+
+    .comm-msg-to {
+      font-size: 11px;
+      color: var(--gold);
+      margin-bottom: 4px
+    }
+
+    .comm-msg-body {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.55;
+      white-space: pre-wrap
+    }
+
+    .comm-compose {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg3);
+      padding: 12px
+    }
+
+    .comm-target-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap
+    }
+
+    .comm-target-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text2);
+      padding-top: 2px;
+      white-space: nowrap
+    }
+
+    .comm-target-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      flex: 1
+    }
+
+    .comm-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text2);
+      transition: all .15s;
+      user-select: none
+    }
+
+    .comm-chip.selected {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent)
+    }
+
+    .comm-chip.all-chip.selected {
+      background: var(--green-dim);
+      border-color: var(--green);
+      color: var(--green)
+    }
+
+    .comm-textarea {
+      width: 100%;
+      min-height: 64px;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 13px;
+      font-family: var(--font-body);
+      resize: none;
+      line-height: 1.5
+    }
+
+    .comm-send-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px
+    }
+
+    .comm-empty {
+      text-align: center;
+      color: var(--text3);
+      font-size: 12px;
+      padding: 20px
+    }
+
+    /* Project detail modal wider */
+    #proj-detail-modal .modal {
+      max-width: 680px
+    }
+
+    /* tag display in project card */
+    .proj-client-tag {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 4px
+    }
   </style>
 </head>
 
@@ -1733,13 +1903,29 @@
   <div class="toast-container" id="toast-container"></div>
 
   <div class="modal-overlay" id="project-modal">
-    <div class="modal">
-      <div class="modal-header"><span class="modal-title">프로젝트 생성</span><button class="modal-close"
-          onclick="closeModal('project-modal')">✕</button></div>
+    <div class="modal" style="max-width:580px">
+      <div class="modal-header"><span class="modal-title" id="proj-modal-title">프로젝트 생성</span><button
+          class="modal-close" onclick="closeModal('project-modal')">✕</button></div>
       <div class="form-group"><label class="form-label">프로젝트명 <span class="req">*</span></label><input
           class="form-input" id="proj-name" /></div>
       <div class="form-group"><label class="form-label">설명</label><textarea class="form-textarea"
           id="proj-desc"></textarea></div>
+      <div
+        style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px;background:var(--bg3)">
+        <div
+          style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">
+          계약 정보 (선택)</div>
+        <div class="form-group"><label class="form-label">발주처</label><input class="form-input" id="proj-client"
+            placeholder="(주)○○○" /></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">계약기간 시작</label><input class="form-input" type="date"
+              id="proj-contract-start" /></div>
+          <div class="form-group" style="margin-bottom:0"><label class="form-label">계약기간 종료</label><input
+              class="form-input" type="date" id="proj-contract-end" /></div>
+        </div>
+        <div class="form-group" style="margin-bottom:0"><label class="form-label">총계약금액</label><input class="form-input"
+            id="proj-amount" type="text" placeholder="예: 50,000,000 원" oninput="fmtAmount(this)" /></div>
+      </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">마감일</label><input class="form-input" type="date"
             id="proj-due" /></div>
@@ -1750,8 +1936,8 @@
           </select></div>
       </div>
       <div class="form-group"><label class="form-label">담당자 (쉼표 구분)</label><input class="form-input" id="proj-members"
-          placeholder="홍길동, 김철수" /></div><button class="btn btn-primary" style="width:100%;margin-top:4px"
-        onclick="createProject()">생성</button>
+          placeholder="홍길동, 김철수" /></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="createProject()">생성</button>
     </div>
   </div>
   <div class="modal-overlay" id="notice-modal">
@@ -1814,10 +2000,38 @@
     </div>
   </div>
   <div class="modal-overlay" id="proj-detail-modal">
-    <div class="modal" style="max-width:600px">
+    <div class="modal" style="max-width:680px">
       <div class="modal-header"><span class="modal-title" id="pd-title">프로젝트 상세</span><button class="modal-close"
           onclick="closeModal('proj-detail-modal')">✕</button></div>
       <div id="pd-content"></div>
+      <!-- 소통 게시판 -->
+      <div class="comm-board" id="comm-board-section">
+        <div class="comm-board-title">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14" style="color:var(--accent)">
+            <path fill-rule="evenodd"
+              d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+              clip-rule="evenodd" />
+          </svg>
+          소통 게시판
+          <span id="comm-count" style="font-size:11px;color:var(--text3);font-weight:400;margin-left:4px"></span>
+        </div>
+        <div class="comm-messages" id="comm-messages">
+          <div class="comm-empty">메시지가 없습니다. 첫 번째 글을 남겨보세요!</div>
+        </div>
+        <!-- 작성 영역 -->
+        <div class="comm-compose">
+          <div class="comm-target-row">
+            <span class="comm-target-label">대상:</span>
+            <div class="comm-target-chips" id="comm-target-chips">
+              <span class="comm-chip all-chip selected" data-uid="all" onclick="toggleCommTarget(this)">전체</span>
+            </div>
+          </div>
+          <textarea class="comm-textarea" id="comm-input" placeholder="내용을 입력하세요..." rows="2"></textarea>
+          <div class="comm-send-row">
+            <button class="btn btn-primary btn-sm" onclick="sendCommMessage()">전송</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="modal-overlay" id="leave-detail-modal">
@@ -1947,6 +2161,7 @@
       const pri = { normal: 'badge-gray', high: 'badge-gold', urgent: 'badge-red' }[p.priority || 'normal'];
       const priLabel = { normal: '일반', high: '높음', urgent: '긴급' }[p.priority || 'normal'];
       const prog = p.progress || 0;
+      const clientLine = p.client ? `<div class="proj-client-tag">📋 ${p.client}${p.contractAmount ? ' · ' + Number(p.contractAmount).toLocaleString('ko-KR') + '원' : ''}</div>` : '';
       return `<div class="kanban-card" onclick="showProjectDetail('${p.id}')">
     <div class="kanban-card-title">${p.name}</div>
     <div class="kanban-card-meta">
@@ -1954,6 +2169,7 @@
       ${p.due ? `<span>~${p.due}</span>` : ''}
       ${p.members ? `<span>${p.members}</span>` : ''}
     </div>
+    ${clientLine}
     ${p.desc ? `<div style="font-size:12px;color:var(--text3);margin-top:6px;line-height:1.4">${p.desc.slice(0, 60)}${p.desc.length > 60 ? '...' : ''}</div>` : ''}
     <div class="kanban-card-progress">
       <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:4px"><span>진행률</span><span>${prog}%</span></div>
@@ -1964,18 +2180,43 @@
 
     window.createProject = async function () {
       const name = v('proj-name'); if (!name) { toast('프로젝트명을 입력하세요', 'error'); return }
-      await addDoc(collection(db, 'projects'), { name, desc: v('proj-desc'), due: v('proj-due'), priority: v('proj-priority') || 'normal', members: v('proj-members'), status: 'todo', progress: 0, creatorId: currentUser.uid, creatorName: currentUser.name, createdAt: serverTimestamp() });
+      const amtRaw = v('proj-amount').replace(/,/g, '').replace(/[^0-9]/g, '');
+      await addDoc(collection(db, 'projects'), {
+        name, desc: v('proj-desc'), due: v('proj-due'),
+        priority: v('proj-priority') || 'normal', members: v('proj-members'),
+        client: v('proj-client'), contractStart: v('proj-contract-start'),
+        contractEnd: v('proj-contract-end'), contractAmount: amtRaw ? parseInt(amtRaw) : null,
+        status: 'todo', progress: 0, creatorId: currentUser.uid, creatorName: currentUser.name, createdAt: serverTimestamp()
+      });
       closeModal('project-modal'); toast('프로젝트가 생성되었습니다', 'success'); loadProjectBoard();
-      ['proj-name', 'proj-desc', 'proj-due', 'proj-members'].forEach(id => setVal(id, ''));
+      ['proj-name', 'proj-desc', 'proj-due', 'proj-members', 'proj-client', 'proj-contract-start', 'proj-contract-end', 'proj-amount'].forEach(id => setVal(id, ''));
     };
 
+    window.fmtAmount = function (el) {
+      const raw = el.value.replace(/[^0-9]/g, '');
+      el.value = raw ? Number(raw).toLocaleString('ko-KR') : '';
+    };
+
+    // current project id for comm board
+    let currentProjId = null;
+    let commUnsubscribe = null;
+
     window.showProjectDetail = async function (id) {
+      currentProjId = id;
       const snap = await getDoc(doc(db, 'projects', id)); const p = snap.data();
       document.getElementById('pd-title').textContent = p.name;
       const isManager = currentUser.approvalLevel > 0 || currentUser.isAdmin;
+
+      // Contract info rows
+      let contractRows = '';
+      if (p.client) contractRows += `<tr><td style="padding:6px 0;color:var(--text3);width:80px">발주처</td><td><strong>${p.client}</strong></td></tr>`;
+      if (p.contractStart || p.contractEnd) contractRows += `<tr><td style="padding:6px 0;color:var(--text3)">계약기간</td><td>${p.contractStart || '?'} ~ ${p.contractEnd || '?'}</td></tr>`;
+      if (p.contractAmount) contractRows += `<tr><td style="padding:6px 0;color:var(--text3)">계약금액</td><td style="color:var(--gold);font-weight:700">${Number(p.contractAmount).toLocaleString('ko-KR')} 원</td></tr>`;
+
       document.getElementById('pd-content').innerHTML = `
-    <div style="margin-bottom:14px">${p.desc || '설명 없음'}</div>
+    <div style="margin-bottom:14px;font-size:13px;color:var(--text2);line-height:1.6">${p.desc || '설명 없음'}</div>
     <table style="width:100%;font-size:13px;border-collapse:collapse">
+      ${contractRows}
       <tr><td style="padding:6px 0;color:var(--text3);width:80px">상태</td><td><span class="badge ${p.status === 'done' ? 'badge-green' : p.status === 'doing' ? 'badge-blue' : 'badge-gray'}">${{ todo: '시작 전', doing: '진행 중', done: '완료' }[p.status]}</span></td></tr>
       <tr><td style="padding:6px 0;color:var(--text3)">마감일</td><td>${p.due || '-'}</td></tr>
       <tr><td style="padding:6px 0;color:var(--text3)">담당자</td><td>${p.members || '-'}</td></tr>
@@ -1992,7 +2233,117 @@
         <button class="btn btn-primary btn-sm" onclick="updateProject('${id}')">저장</button>
       </div>
     </div>`: ''}`;
+
+      // Load member list for target chips
+      await loadCommTargetChips(p);
+      // Load comm messages (realtime)
+      loadCommMessages(id);
       openModal('proj-detail-modal');
+    };
+
+    // Build target chips from all employees + project members hint
+    async function loadCommTargetChips(proj) {
+      const snaps = await getDocs(collection(db, 'users'));
+      const chips = document.getElementById('comm-target-chips');
+      // reset
+      chips.innerHTML = '<span class="comm-chip all-chip selected" data-uid="all" onclick="toggleCommTarget(this)">전체</span>';
+      snaps.docs.forEach(d => {
+        if (d.id === currentUser.uid) return; // exclude self
+        const u = d.data();
+        const chip = document.createElement('span');
+        chip.className = 'comm-chip';
+        chip.dataset.uid = d.id;
+        chip.dataset.name = u.name || '?';
+        chip.textContent = (u.name || '?') + (u.rank ? ' ' + u.rank : '');
+        chip.onclick = function () { toggleCommTarget(this); };
+        chips.appendChild(chip);
+      });
+    }
+
+    window.toggleCommTarget = function (el) {
+      const isAll = el.dataset.uid === 'all';
+      const chips = document.getElementById('comm-target-chips');
+      if (isAll) {
+        // select all, deselect others
+        chips.querySelectorAll('.comm-chip').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+      } else {
+        // deselect "전체"
+        chips.querySelector('.all-chip').classList.remove('selected');
+        el.classList.toggle('selected');
+        // if none selected, revert to all
+        const anySelected = [...chips.querySelectorAll('.comm-chip:not(.all-chip)')].some(c => c.classList.contains('selected'));
+        if (!anySelected) chips.querySelector('.all-chip').classList.add('selected');
+      }
+    };
+
+    function loadCommMessages(projId) {
+      if (commUnsubscribe) commUnsubscribe();
+      const q = query(collection(db, 'projects', projId, 'messages'), orderBy('createdAt', 'asc'));
+      commUnsubscribe = onSnapshot(q, snap => {
+        const msgs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderCommMessages(msgs);
+      });
+    }
+
+    function renderCommMessages(msgs) {
+      const div = document.getElementById('comm-messages');
+      const countEl = document.getElementById('comm-count');
+      if (!msgs.length) {
+        div.innerHTML = '<div class="comm-empty">메시지가 없습니다. 첫 번째 글을 남겨보세요!</div>';
+        countEl.textContent = '';
+        return;
+      }
+      countEl.textContent = msgs.length + '건';
+      div.innerHTML = msgs.map(m => {
+        const isMine = m.authorId === currentUser.uid;
+        const toLabel = m.toAll ? '→ 전체' : (m.toNames && m.toNames.length ? '→ ' + m.toNames.join(', ') : '');
+        const dt = m.createdAt ? (m.createdAt.toDate ? m.createdAt.toDate() : new Date(m.createdAt)) : new Date();
+        const timeStr = `${dt.getFullYear()}.${String(dt.getMonth() + 1).padStart(2, '0')}.${String(dt.getDate()).padStart(2, '0')} ${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`;
+        return `<div class="comm-msg${isMine ? ' mine' : ''}">
+          <div class="comm-msg-header">
+            <span class="comm-msg-author">${m.authorName}${m.authorRank ? ' ' + m.authorRank : ''}</span>
+            <span class="comm-msg-time">${timeStr}</span>
+          </div>
+          ${toLabel ? `<div class="comm-msg-to">${toLabel}</div>` : ''}
+          <div class="comm-msg-body">${escHtml(m.body)}</div>
+        </div>`;
+      }).join('');
+      div.scrollTop = div.scrollHeight;
+    }
+
+    window.sendCommMessage = async function () {
+      const body = document.getElementById('comm-input').value.trim();
+      if (!body) { toast('내용을 입력하세요', 'error'); return }
+      if (!currentProjId) return;
+
+      const chips = document.getElementById('comm-target-chips');
+      const allChip = chips.querySelector('.all-chip');
+      const toAll = allChip.classList.contains('selected');
+      const toUids = [], toNames = [];
+      if (!toAll) {
+        chips.querySelectorAll('.comm-chip:not(.all-chip)').forEach(c => {
+          if (c.classList.contains('selected')) { toUids.push(c.dataset.uid); toNames.push(c.dataset.name); }
+        });
+      }
+
+      await addDoc(collection(db, 'projects', currentProjId, 'messages'), {
+        body, toAll, toUids, toNames,
+        authorId: currentUser.uid, authorName: currentUser.name, authorRank: currentUser.rank || '',
+        createdAt: serverTimestamp()
+      });
+      document.getElementById('comm-input').value = '';
+    };
+
+    function escHtml(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // close comm subscription when modal closes
+    const origClose = window.closeModal;
+    window.closeModal = function (id) {
+      origClose(id);
+      if (id === 'proj-detail-modal' && commUnsubscribe) { commUnsubscribe(); commUnsubscribe = null; }
     };
 
     window.updateProject = async function (id) {
